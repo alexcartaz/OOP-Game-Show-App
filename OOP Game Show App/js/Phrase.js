@@ -20,18 +20,16 @@
 </div>
 */
 
-function createLiLetterNode(letter){
+function createLiCharNode(char){
     let li = document.createElement('li');
-    /*
-    li.innerHTML = letter;
-    if('letter'===' '){
+    li.innerHTML = char;
+    if(char===' '){
         li.classList.add('space');
     }else{
         li.classList.add('hide');
         li.classList.add('letter');
-        li.classList.add(letter);
+        li.classList.add(char);
     }
-    */
     return li;
 }
 
@@ -42,31 +40,31 @@ class Phrase {
 
     addPhraseToDisplay(){
         let phraseChars = this.phrase.split('');
-        let ul = document.querySelector('#phrase').firstChild;
-        let li = createLiLetterNode(phraseChars[0]);
-        console.log(ul);
-        console.log(li);
-        ul.appendChild(li);
-        phraseChars.shift();
-        phraseChars.map((l) => {
-            let children = ul.children;
-            let referenceNode = children[children.length-1];
-            referenceNode.parentNode.insertBefore(createLiLetterNode(l), referenceNode.nextSibling);
+        let ulContainer = document.querySelector('#phrase');
+        let ul = document.createElement('ul');
+        phraseChars.map((char) => {
+            let li = createLiCharNode(char);
+            ul.appendChild(li);
         })
+
+        //console.log(ul)
+        ulContainer.innerHTML = '';
+        ulContainer.appendChild(ul);
 
     }
 
     checkLetter(letter){
-        if(this.phrase.indexOf(letter)===-1) return false;
+        if(this.phrase.toLowerCase().indexOf(letter)===-1) return false;
         return true;
     }
 
     showMatchedLetter(letter){
         let boardLetters = document.querySelectorAll('.letter');
-        boardLetters.map((l) => {
-            if(l.innerHTML === letter){
-                l.classList.add('show');
-                l.classList.remove('hide');
+
+        boardLetters.forEach((node) => {
+            if(node.innerHTML.toLowerCase() === letter){
+                node.classList.add('show');
+                node.classList.remove('hide');
             }
         });
 

@@ -16,6 +16,7 @@ let game = new Game(phrases);
 
 //"Start Game" button listener
 document.querySelector("#btn__reset").addEventListener('click', (e) =>{
+    game = new Game(phrases);
     game.startGame();
 });
 
