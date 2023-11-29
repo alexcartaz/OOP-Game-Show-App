@@ -44,21 +44,20 @@ class Phrase {
     // generates HTML to render board based on the randomly selected phrase
     addPhraseToDisplay(){
 
+        // convert phrase to array of its component characters
         let phraseChars = this.phrase.split('');
-        let ulContainer = document.querySelector('#phrase');
-        let ul = document.createElement('ul');
 
-        // need to create an element for each character
+        // grab board container
+        let ul = document.querySelector('#phrase ul');
+
+        // clear board
+        ul.innerHTML = '';
+
+        // create an element for each character and create list
         phraseChars.map((char) => {
             let li = createLiCharNode(char);
             ul.appendChild(li);
         })
-
-        // clear old board, if there was one
-        ulContainer.innerHTML = '';
-
-        // add board we just created
-        ulContainer.appendChild(ul);
 
     }
 
