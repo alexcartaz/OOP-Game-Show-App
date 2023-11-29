@@ -14,41 +14,42 @@ class Game {
     }
 
     getRandomPhrase(){
-        //return a random phrase
+        // return a random phrase
         return this.phrases[getRndInteger(0,this.phrases.length)];
     }
 
     startGame(){
-        //hides the start screen overlay
+        // hides the start screen overlay
         document.querySelector('#overlay').style.display = 'none';
         
-        //sets active prhase to a new random phrase and adds it to display
+        // sets active prhase to a new random phrase and adds it to display
         this.activePhrase = new Phrase(this.getRandomPhrase());
         this.activePhrase.addPhraseToDisplay();
     }
 
     gameOver(outcome){
-        //this method displays the original start screen overlay
+        
+        // this method displays the original start screen overlay
         document.querySelector('.start').style.display = 'block';
         
+        // set W/L outcome messages
         let outcomeMessage = {
             'win': 'YOU WON!',
             'lose': 'Sorry, you lost.'
         }
-        //and depending on the outcome of the game, updates the overlay h1 element with a 
-        //friendly win or loss message, and replaces the overlay’s start CSS class with 
-        //either the win or lose CSS class.
+
+        // display outcome messages
         let outcomeOverlay = document.querySelector('#game-over-message');
         outcomeOverlay.innerHTML = outcomeMessage[outcome];
         outcomeOverlay.classList.add(outcome);
 
-        //reset hearts
+        // reset hearts
         let hearts = document.querySelectorAll('.tries');
         hearts.forEach((li) => {
             li.firstChild.src='images/liveHeart.png';
         });
 
-        //reset keyboard
+        // reset keyboard
         let keys = document.querySelectorAll('.key');
         keys.forEach((button) => {
             button.classList.remove('chosen');
@@ -59,55 +60,66 @@ class Game {
     }
 
     removeLife(){
-        //increments the missed property
+        
+        // increments the missed property
         this.missed++;
 
-        //this method removes a life from the scoreboard, by replacing one of the 
-        //liveHeart.png images with a lostHeart.png image (found in the images folder)
+        // this method removes a life from the scoreboard, by replacing one of the 
+        // liveHeart.png images with a lostHeart.png image (found in the images folder)
 
-        //grab array of li elements containing <img> of hearts
+        // grab array of li elements containing <img> of hearts
         let hearts = document.querySelectorAll('.tries');
-        //select the index of the heart to change image of (this approach starts on the right and works its way left)
         let i = hearts.length-this.missed;
-        //change full heart img to lost heart img
         hearts[i].firstChild.src='images/lostHeart.png';
 
-        //If the player has five missed guesses (i.e they're out of lives), then end the game by calling the gameOver() method.
+        // If the player has five missed guesses (i.e they're out of lives), then end the game by calling the gameOver() method.
         if(this.missed === 5){
             this.gameOver('lose');
         }
     }
 
-    handleInteraction(e){
-        //disable the selected letter's onscreen keyboard button
-        e.target.setAttribute("disabled", true);
+    handleInteraction(char, button){
+        // this method is called whenever the user makes a guess (is this letter in the prhase?)
 
-        //if the phrase does NOT include the guessed letter...
-        if(this.activePhrase.checkLetter(e.target.innerHTML)){
-            //add the chosen CSS class to the selected letter's keybpard button
-            e.target.classList.add('chosen');
-            this.activePhrase.showMatchedLetter(e.target.innerHTML);
+        // disable the selected letter's onscreen keyboard button
+        button.setAttribute("disabled", true);
+
+        // if the phrase does include the guessed letter...
+        if(this.activePhrase.checkLetter(char)){
+            
+            // apply styling
+            button.classList.add('chosen');
+            
+            // update board
+            this.activePhrase.showMatchedLetter(char);
+            
+            // check win condition
             if(this.checkForWin()){
                 this.gameOver('win');
             }
+
         }else{
-            e.target.classList.add('wrong');
+            // if the phrase does NOT include the guessed letter...
+
+            // apply styling
+            button.classList.add('wrong');
+
+            // update life total
             this.removeLife();
         }
 
-        //If the phrase includes the guessed letter, add the chosen CSS class to the 
-        //selected letter's keyboard button, call the showMatchedLetter() method on 
-        //the phrase, and then call the checkForWin() method. If the player has won 
-        //the game, also call the gameOver() method.
-        
     }
 
 
 
     checkForWin(){
-        //this method checks to see if the player has revealed all of the letters in the active phrase.
+        // this method checks to see if the player has revealed all of the letters in the active phrase.
+        
         let boardLetters = document.querySelectorAll('.letter');
         let didWin = true;
+        
+        // if all letters on the board are revealed, the user won
+        // eg if even a single letter is hidden, the user did not yet win
         boardLetters.forEach((node) => {
             if(node.classList.contains('hide')) didWin = false;
         });
